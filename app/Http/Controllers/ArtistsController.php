@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateArtistRequest;
+use App\Http\Requests\UpdateArtistRequest;
+use App\Http\Resources\ArtistsCollection;
+use App\Http\Resources\ArtistsResource;
 use App\Models\Artist;
 use Illuminate\Http\Request;
 
@@ -14,7 +18,8 @@ class ArtistsController extends Controller
      */
     public function index()
     {
-        //
+        $artists = Artist::all();
+        return new ArtistsCollection($artists);
     }
 
     /**
@@ -33,9 +38,14 @@ class ArtistsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateArtistRequest $request)
     {
-        //
+        $artist = Artist::create([
+            'name' => $request->input('data.attributes.name'),
+        ]);
+        return (new ArtistsResource($artist))->response()->header('Location', route('artists.show', [
+            'artist' =>  $artist,
+        ]));
     }
 
     /**
@@ -46,7 +56,7 @@ class ArtistsController extends Controller
      */
     public function show(Artist $artist)
     {
-        //
+        return new ArtistsResource($artist);
     }
 
     /**
@@ -67,9 +77,10 @@ class ArtistsController extends Controller
      * @param  \App\Models\Artist  $artist
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Artist $artist)
+    public function update(UpdateArtistRequest $request, Artist $artist)
     {
-        //
+        $artist->update($request->input('data.attributes'));
+        return new ArtistsResource($artist);
     }
 
     /**
@@ -80,6 +91,7 @@ class ArtistsController extends Controller
      */
     public function destroy(Artist $artist)
     {
-        //
+        $artist->delete();
+        return response(null, 204);
     }
 }
