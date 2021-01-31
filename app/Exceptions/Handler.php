@@ -3,6 +3,8 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Collection;
+use Illuminate\Validation\ValidationException;
 
 class Handler extends ExceptionHandler
 {
